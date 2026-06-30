@@ -13,9 +13,19 @@ public class Account {
         this.accountType = accountType;
     }
 
+    public String getCustomerId() {
+        return customerId;
+    }
 
+    public String getAccountNumber() {
+        return accountNumber;
+    }
 
+    public Double getBalance() {
+        return balance;
+    }
 
-
-
+    public String getAccountType() {
+        return accountType;
+    }
 }

@@ -1,5 +1,6 @@
 package app;
 
+import domain.Account;
 import service.BankService;
 import service.impl.BankServiceImpl;
 
@@ -36,7 +37,7 @@ public class Main {
                 case "3"->withdraw(v);
                 case "4"->transfer(v);
                 case "5"->statements(v);
-                case "6"->listAccounts(v);
+                case "6"->listAccounts(v,bankService);
                 case "7"->searchAccounts(v);
                 case "0"->run=false;
 
@@ -86,9 +87,12 @@ public class Main {
     private static void statements(Scanner v) {
     }
 
-    private static void listAccounts(Scanner v) {
+    private static void listAccounts(Scanner v,BankService bankService) {
+        // list of accounts
+        for (Account account : bankService.listAccounts()) {
+            System.out.println(account.getAccountNumber()+" | "+account.getAccountType()+" | "+account.getBalance());
+        }
     }
-
     private static void searchAccounts(Scanner v) {
     }
 

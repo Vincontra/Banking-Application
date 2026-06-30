@@ -1,9 +1,11 @@
 package app;
 
 import domain.Account;
+import domain.Transaction;
 import service.BankService;
 import service.impl.BankServiceImpl;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -36,9 +38,9 @@ public class Main {
                 case "2"->deposit(v,bankService);
                 case "3"->withdraw(v,bankService);
                 case "4"->transfer(v,bankService);
-                case "5"->statements(v);
+                case "5"->statements(v,bankService);
                 case "6"->listAccounts(v,bankService);
-                case "7"->searchAccounts(v);
+                case "7"->searchAccounts(v,bankService);
                 case "0"->run=false;
 
             }
@@ -53,9 +55,9 @@ public class Main {
     }
 
     private static void openAccount(Scanner v,BankService bankService) {
-        System.out.println("Custmer Name");
+        System.out.println("Customer Name");
         String name=v.nextLine().trim();
-        System.out.println("Custmer email");
+        System.out.println("Customer email");
         String email=v.nextLine().trim();
         System.out.println("Account Type (SAVINGS/CURRENT): ");
         String type=v.nextLine().trim();
@@ -101,16 +103,16 @@ public class Main {
         String ToAccountNumber=v.nextLine().trim();
         System.out.println("Amount You want to Transfer");
         Double amount=Double.valueOf(v.nextLine().trim());
-
-
-//        bankService.withdraw(FromAccountNumber,amount,"Withdraw from Acc No : "+FromAccountNumber);
-//        bankService.deposit(ToAccountNumber,amount,"Credited to Acc No: "+ToAccountNumber);
-//        System.out.println("Transfer Successful");
-
         bankService.transfer(FromAccountNumber,ToAccountNumber,amount,"Transfer");
     }
 
-    private static void statements(Scanner v) {
+    private static void statements(Scanner v,BankService bankService) {
+        System.out.println("Account Number");
+        String Account=v.nextLine().trim();
+        List<Transaction>list=bankService.getStatement(Account);
+        for (Transaction t:list){
+            System.out.println(t.getTimestamp()+" | "+t.getType()+" | "+t.getAmount()+" | "+t.getNote()+" | "+t.getId());
+        }
     }
 
     private static void listAccounts(Scanner v,BankService bankService) {
@@ -119,8 +121,14 @@ public class Main {
             System.out.println(account.getAccountNumber()+" | "+account.getAccountType()+" | "+account.getBalance());
         }
     }
-    private static void searchAccounts(Scanner v) {
-
+    private static void searchAccounts(Scanner v,BankService bankService) {
+        // I was planning to Search Accounts by Name
+        // like for particular name how many accounts are there its list basically
+        System.out.println("Customer name Please");
+        String name=v.nextLine().trim();
+        for (Account account : bankService.searchAccountsByCustomerName(name)) {
+            System.out.println(account.getAccountNumber()+" | "+account.getAccountType()+" | "+account.getBalance());
+        }
     }
 
 }

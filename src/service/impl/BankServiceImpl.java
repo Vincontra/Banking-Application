@@ -1,28 +1,32 @@
 package service.impl;
 import domain.Account;
+import domain.Customer;
 import domain.Transaction;
 import domain.Type;
 import repository.AccountRepository;
+import repository.CustomerRepository;
 import repository.TransactionRepository;
 import service.BankService;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BankServiceImpl implements BankService {
 
     private final AccountRepository accountRepository=new AccountRepository();
     private final TransactionRepository transactionRepository=new TransactionRepository();
+    private final CustomerRepository customerRepository=new CustomerRepository();
+
 
 
     @Override
     public String openAccount(String name, String email, String accountType) {
         String customerId= UUID.randomUUID().toString();
 
+        // We need to create new Customer as well
+        Customer customer = new Customer(customerId,name,email);
+        customerRepository.save(customer);
         // CHANGE LATER --> 10+1=AC11
 
         String accountNumber = getAccountNumber();
@@ -101,6 +105,9 @@ public class BankServiceImpl implements BankService {
         // so no worries need to do that in same way just need to write it
         // all over again here
 
+
+
+
         //withdraw()
         Account account=accountRepository.
                 findByNumber(fromAccountNumber).
@@ -124,6 +131,36 @@ public class BankServiceImpl implements BankService {
                 new Transaction(toAccountNumber,amount,UUID.randomUUID().toString(),transfer, LocalDateTime.now(), Type.TRANSFER_IN);
 
         transactionRepository.add(transaction1);
+    }
+
+    @Override
+    public List<Transaction> getStatement(String account) {
+        return transactionRepository.
+                findByAccount(account).stream()
+                .sorted(Comparator.comparing(Transaction::getTimestamp))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Account> searchAccountsByCustomerName(String name) {
+        if (name==null){
+            return new ArrayList<>();
+        }
+        String query=name.toLowerCase();
+        // just doing that to ensure the exact match
+        // like if somebody search like ViNay
+        // so this name would not be in database so
+        // it is better to have it in small case
+
+        List<Account>result=new ArrayList<>();
+        for (Customer c:customerRepository.findAll()){
+            if (c.getName().toLowerCase().contains(query)){
+                result.addAll(accountRepository.findByCustomerId(c.getId()));
+            }
+        }
+        result.sort(Comparator.comparing(Account::getAccountNumber));
+        return result;
+
     }
 
 }

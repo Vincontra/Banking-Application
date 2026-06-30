@@ -2,10 +2,7 @@ package repository;
 
 import domain.Transaction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TransactionRepository {
     private final Map<String, List<Transaction>>txByAccount=new HashMap<>();
@@ -22,5 +19,9 @@ public class TransactionRepository {
             txByAccount.put(key, new ArrayList<>());
             txByAccount.get(key).add(transaction);
         }
+    }
+
+    public List<Transaction> findByAccount(String account) {
+        return new ArrayList<>(txByAccount.getOrDefault(account, Collections.emptyList()));
     }
 }

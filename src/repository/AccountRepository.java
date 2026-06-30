@@ -1,6 +1,7 @@
 package repository;
 
 import domain.Account;
+import domain.Customer;
 
 import java.util.*;
 
@@ -20,5 +21,15 @@ public class AccountRepository {
         // Optional as it might possible that the user may enter wrong
         // acc number so it will not be in hashmap then it may return null
         // to handle that null i used optional
+    }
+
+    public List<Account> findByCustomerId(String customerId){
+        List<Account>result=new ArrayList<>();
+        for (Account a:accountByNumber.values()){
+            if (a.getCustomerId().equals(customerId)){
+                result.add(a);
+            }
+        }
+        return result;
     }
 }

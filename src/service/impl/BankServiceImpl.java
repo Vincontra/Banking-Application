@@ -6,10 +6,13 @@ import domain.Type;
 import exceptions.AccountNotFoundException;
 import exceptions.DuplicateAccException;
 import exceptions.InsufficientBalException;
+import exceptions.ValidationException;
 import repository.AccountRepository;
 import repository.CustomerRepository;
 import repository.TransactionRepository;
 import service.BankService;
+import util.Validation;
+
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -21,10 +24,51 @@ public class BankServiceImpl implements BankService {
     private final TransactionRepository transactionRepository=new TransactionRepository();
     private final CustomerRepository customerRepository=new CustomerRepository();
 
+    // validation part
+
+    private final Validation<String>validationName=new Validation<String>() {
+        @Override
+        public void validate(String name) throws ValidationException {
+            if (name==null||name.isBlank()){
+                throw new ValidationException("Name is required");
+            }
+        }
+    };
+    private final Validation<String>validationEmail=new Validation<String>() {
+        @Override
+        public void validate(String email) throws ValidationException {
+            if (email==null||email.isBlank()||!email.contains("@")){
+                throw new ValidationException("Enter Proper Email");
+            }
+        }
+    };
+
+    private final Validation<String>validationType=new Validation<String>() {
+        @Override
+        public void validate(String type) throws ValidationException {
+            if (type==null||type.isBlank()||!(type.equalsIgnoreCase("SAVINGS")||type.equalsIgnoreCase("CURRENT"))){
+                throw new ValidationException("Enter Proper Type of Account either SAVINGS/CURRENT");
+            }
+
+        }
+    };
+   private final Validation<Double>validationAmount=new Validation<Double>() {
+       @Override
+       public void validate(Double amt) throws ValidationException {
+           if (amt==null||amt<0){
+               throw new ValidationException("Amount should be Positive only");
+           }
+
+       }
+   };
 
 
     @Override
     public String openAccount(String name, String email, String accountType) {
+        validationName.validate(name);
+        validationEmail.validate(email);
+        validationType.validate(accountType);
+
         String customerId= UUID.randomUUID().toString();
 
         // We need to create new Customer as well
@@ -54,6 +98,7 @@ public class BankServiceImpl implements BankService {
     }
     @Override
     public void deposit(String accountNumber, Double amount,String note) {
+        validationAmount.validate(amount);
         Account account=accountRepository.
                 findByNumber(accountNumber).
                 orElseThrow(()->new AccountNotFoundException("Account Not Found"));
@@ -69,6 +114,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public void withdraw(String accountNumber, Double amount, String note) {
+        validationAmount.validate(amount);
         Account account=accountRepository.
                 findByNumber(accountNumber).
                 orElseThrow(()->new AccountNotFoundException("Account Not Found"));
@@ -90,6 +136,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public void transfer(String fromAccountNumber, String toAccountNumber, Double amount,String transfer) {
+        validationAmount.validate(amount);
         if (fromAccountNumber.equals(toAccountNumber)){
             throw new DuplicateAccException("Can not tranfer to your own account");
         }

@@ -35,7 +35,7 @@ public class Main {
                 case "1"->openAccount(v,bankService);
                 case "2"->deposit(v,bankService);
                 case "3"->withdraw(v,bankService);
-                case "4"->transfer(v);
+                case "4"->transfer(v,bankService);
                 case "5"->statements(v);
                 case "6"->listAccounts(v,bankService);
                 case "7"->searchAccounts(v);
@@ -94,7 +94,20 @@ public class Main {
         System.out.println("Money Withdrawn");
     }
 
-    private static void transfer(Scanner v) {
+    private static void transfer(Scanner v,BankService bankService) {
+        System.out.println("From Account Number");
+        String FromAccountNumber=v.nextLine().trim();
+        System.out.println("To Account Number");
+        String ToAccountNumber=v.nextLine().trim();
+        System.out.println("Amount You want to Transfer");
+        Double amount=Double.valueOf(v.nextLine().trim());
+
+
+//        bankService.withdraw(FromAccountNumber,amount,"Withdraw from Acc No : "+FromAccountNumber);
+//        bankService.deposit(ToAccountNumber,amount,"Credited to Acc No: "+ToAccountNumber);
+//        System.out.println("Transfer Successful");
+
+        bankService.transfer(FromAccountNumber,ToAccountNumber,amount,"Transfer");
     }
 
     private static void statements(Scanner v) {
@@ -107,6 +120,7 @@ public class Main {
         }
     }
     private static void searchAccounts(Scanner v) {
+
     }
 
 }

@@ -80,4 +80,50 @@ public class BankServiceImpl implements BankService {
         transactionRepository.add(transaction);
 
     }
+
+    @Override
+    public void transfer(String fromAccountNumber, String toAccountNumber, Double amount,String transfer) {
+        if (fromAccountNumber.equals(toAccountNumber)){
+            throw new RuntimeException("Can not tranfer to your own account");
+        }
+
+
+//        // transfer is nothing just but withdraw from fromAcc
+//        // deposit to toAcc
+//        // along with that we need to make sure that the Transactions should also be there
+//        // since we have already wrote this Transactions in both withdraw and deposit methods
+//
+//        withdraw(fromAccountNumber,amount,transfer);
+//        deposit(toAccountNumber,amount,transfer);
+        // this is also correct but i want the type as Tranferin and out
+        // as we are tranfing but i have not did that like how to pass since transactions
+        // are update in these methods
+        // so no worries need to do that in same way just need to write it
+        // all over again here
+
+        //withdraw()
+        Account account=accountRepository.
+                findByNumber(fromAccountNumber).
+                orElseThrow(()->new RuntimeException("Account Not Found"));
+        if (account.getBalance().compareTo(amount)<0){
+            throw new RuntimeException("Insufficient Balance");
+        }
+        account.setBalance(account.getBalance()-amount);
+        Transaction transaction=
+                new Transaction(fromAccountNumber,amount,UUID.randomUUID().toString(),transfer, LocalDateTime.now(), Type.TRANSFER_OUT);
+        transactionRepository.add(transaction);
+
+        //deposit()
+        Account account1=accountRepository.
+                findByNumber(toAccountNumber).
+                orElseThrow(()->new RuntimeException("Account Not Found"));
+
+        account1.setBalance(account1.getBalance()+amount);
+
+        Transaction transaction1=
+                new Transaction(toAccountNumber,amount,UUID.randomUUID().toString(),transfer, LocalDateTime.now(), Type.TRANSFER_IN);
+
+        transactionRepository.add(transaction1);
+    }
+
 }

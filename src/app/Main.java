@@ -33,7 +33,7 @@ public class Main {
 
             switch (choice){
                 case "1"->openAccount(v,bankService);
-                case "2"->deposit(v);
+                case "2"->deposit(v,bankService);
                 case "3"->withdraw(v);
                 case "4"->transfer(v);
                 case "5"->statements(v);
@@ -63,8 +63,11 @@ public class Main {
         String amountStr=v.nextLine().trim();
         Double initial= Double.valueOf(amountStr);
 
-        bankService.openAccount(name,email,type);
-
+        String accountNumber=bankService.openAccount(name,email,type);
+        System.out.println("Account opened :"+accountNumber);
+        if (initial>0){
+            bankService.deposit(accountNumber,initial,"Initial Deposit");
+        }
         // service provides main functionality
 
 
@@ -75,7 +78,16 @@ public class Main {
 
     }
 
-    private static void deposit(Scanner v) {
+    private static void deposit(Scanner v,BankService bankService) {
+        System.out.println("Tell me your Account Number");
+        String accountNumber=v.nextLine().trim();
+        System.out.println("Tell me the Amount You want to deposit");
+        Double amount=Double.valueOf(v.nextLine().trim());
+        bankService.deposit(accountNumber,amount,"Deposit");
+        System.out.println("Money Deposited");
+
+
+
     }
 
     private static void withdraw(Scanner v) {

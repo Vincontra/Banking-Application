@@ -25,6 +25,22 @@ public class Account {
         return balance;
     }
 
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
     public String getAccountType() {
         return accountType;
     }

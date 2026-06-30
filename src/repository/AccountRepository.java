@@ -2,10 +2,7 @@ package repository;
 
 import domain.Account;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AccountRepository {
     // account details will be saved by AccountRepo file means this file
@@ -16,5 +13,12 @@ public class AccountRepository {
     }
     public List<Account> findAll(){
         return new ArrayList<>(accountByNumber.values());
+    }
+
+    public Optional<Account> findByNumber(String accountNumber) {
+        return Optional.ofNullable(accountByNumber.get(accountNumber));
+        // Optional as it might possible that the user may enter wrong
+        // acc number so it will not be in hashmap then it may return null
+        // to handle that null i used optional
     }
 }

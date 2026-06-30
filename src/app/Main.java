@@ -34,7 +34,7 @@ public class Main {
             switch (choice){
                 case "1"->openAccount(v,bankService);
                 case "2"->deposit(v,bankService);
-                case "3"->withdraw(v);
+                case "3"->withdraw(v,bankService);
                 case "4"->transfer(v);
                 case "5"->statements(v);
                 case "6"->listAccounts(v,bankService);
@@ -71,11 +71,6 @@ public class Main {
         // service provides main functionality
 
 
-
-
-
-
-
     }
 
     private static void deposit(Scanner v,BankService bankService) {
@@ -90,7 +85,13 @@ public class Main {
 
     }
 
-    private static void withdraw(Scanner v) {
+    private static void withdraw(Scanner v,BankService bankService) {
+        System.out.println("Tell me your Account Number");
+        String accountNumber=v.nextLine().trim();
+        System.out.println("Tell me the Amount You want to withdraw");
+        Double amount=Double.valueOf(v.nextLine().trim());
+        bankService.withdraw(accountNumber,amount,"Withdrawl");
+        System.out.println("Money Withdrawn");
     }
 
     private static void transfer(Scanner v) {

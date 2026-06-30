@@ -3,6 +3,9 @@ import domain.Account;
 import domain.Customer;
 import domain.Transaction;
 import domain.Type;
+import exceptions.AccountNotFoundException;
+import exceptions.DuplicateAccException;
+import exceptions.InsufficientBalException;
 import repository.AccountRepository;
 import repository.CustomerRepository;
 import repository.TransactionRepository;
@@ -53,7 +56,7 @@ public class BankServiceImpl implements BankService {
     public void deposit(String accountNumber, Double amount,String note) {
         Account account=accountRepository.
                 findByNumber(accountNumber).
-                orElseThrow(()->new RuntimeException("Account Not Found"));
+                orElseThrow(()->new AccountNotFoundException("Account Not Found"));
 
         account.setBalance(account.getBalance()+amount);
 
@@ -68,12 +71,12 @@ public class BankServiceImpl implements BankService {
     public void withdraw(String accountNumber, Double amount, String note) {
         Account account=accountRepository.
                 findByNumber(accountNumber).
-                orElseThrow(()->new RuntimeException("Account Not Found"));
+                orElseThrow(()->new AccountNotFoundException("Account Not Found"));
 
         // we should check it first ki bhai is there enough money to withdraw or not
 
         if (account.getBalance().compareTo(amount)<0){
-            throw new RuntimeException("Insufficient Balance");
+            throw new InsufficientBalException("Insufficient Balance");
         }
 
         account.setBalance(account.getBalance()-amount);
@@ -88,7 +91,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public void transfer(String fromAccountNumber, String toAccountNumber, Double amount,String transfer) {
         if (fromAccountNumber.equals(toAccountNumber)){
-            throw new RuntimeException("Can not tranfer to your own account");
+            throw new DuplicateAccException("Can not tranfer to your own account");
         }
 
 
@@ -111,9 +114,9 @@ public class BankServiceImpl implements BankService {
         //withdraw()
         Account account=accountRepository.
                 findByNumber(fromAccountNumber).
-                orElseThrow(()->new RuntimeException("Account Not Found"));
+                orElseThrow(()->new AccountNotFoundException("Account Not Found"));
         if (account.getBalance().compareTo(amount)<0){
-            throw new RuntimeException("Insufficient Balance");
+            throw new InsufficientBalException("Insufficient Balance");
         }
         account.setBalance(account.getBalance()-amount);
         Transaction transaction=
@@ -123,7 +126,7 @@ public class BankServiceImpl implements BankService {
         //deposit()
         Account account1=accountRepository.
                 findByNumber(toAccountNumber).
-                orElseThrow(()->new RuntimeException("Account Not Found"));
+                orElseThrow(()->new AccountNotFoundException("Account Not Found"));
 
         account1.setBalance(account1.getBalance()+amount);
 
